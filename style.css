@@ -1,0 +1,695 @@
+/* ==================================================================
+   GREENMIND | Situs toko tanaman
+   Disusun dengan pola yang sama seperti panduan SehatNusa.
+
+   Cara membaca file ini:
+   - File disusun per BAGIAN halaman: [0], [1], [A], [B], ... [G]
+     (huruf bagian sama dengan komentar di index.html)
+   - Setiap bagian ditulis "mobile first": gaya untuk ponsel dulu,
+     lalu @media (min-width: ...) untuk layar yang lebih lebar.
+   - Breakpoint: 768px (tablet) dan 1024px (desktop).
+
+   Palet warna:
+   Hijau kebiruan #c1dcdc   Teks judul #1e1e1e   Teks isi #6b6f76
+   ================================================================== */
+
+/* ==== [0] RESET ==== */
+/* Reset ditaruh di @layer agar mudah dikalahkan aturan di bawahnya. */
+@layer reset {
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+    body, h1, h2, h3, h4, p, ul, figure, blockquote {
+        margin: 0;
+    }
+    ul {
+        padding: 0;
+        list-style: none;
+    }
+    img {
+        max-width: 100%;
+        display: block;
+    }
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+    input, button {
+        font: inherit;
+        color: inherit;
+    }
+}
+
+/* ==== [1] DASAR ==== */
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #6b6f76;
+    background: #ffffff;
+}
+
+h1, h2, h3, h4 {
+    color: #1e1e1e;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+/* Pembungkus konten: lebar maksimal 1200px dan selalu di tengah */
+.container {
+    width: 100%;
+    max-width: 1232px;      /* 1200px konten + 2 x 16px padding */
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.bagian { padding: 64px 0; }
+.judul-bagian { font-size: 30px; }
+
+/* Judul + kalimat pendek yang rata tengah (bagian D dan E) */
+.bagian .container > h2 {
+    font-size: 30px;
+    text-align: center;
+}
+.bagian .container > h2 + p {
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* Kolom teks: judul, paragraf, dan tombol bertumpuk rapi */
+.teks {
+    display: grid;
+    gap: 20px;
+    justify-items: start;   /* tombol tidak melebar penuh */
+}
+
+/* Tombol yang dipakai di beberapa bagian */
+.tombol {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 26px;
+    border-radius: 8px;
+    background: #c1dcdc;
+    color: #1e1e1e;
+    font-weight: 600;
+    font-size: 15px;
+}
+.tombol:hover { background: #aacfcf; }
+.tombol span:empty { display: none; }  /* span kosong tidak ikut menambah jarak flex */
+
+/* Kursor keyboard tetap terlihat */
+a:focus-visible,
+button:focus-visible,
+.hamburger:focus-visible {
+    outline: 3px solid #1e1e1e;
+    outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+    .judul-bagian { font-size: 36px; }
+    .bagian .container > h2 { font-size: 32px; }
+}
+@media (min-width: 1024px) {
+    .bagian { padding: 96px 0; }
+    .judul-bagian { font-size: 40px; }
+    .bagian .container > h2 { font-size: 34px; }
+}
+
+/* ==== [A] HEADER & MENU ==== */
+.navbar {
+    position: sticky;       /* menempel di atas saat di-scroll */
+    top: 0;
+    z-index: 100;           /* selalu di depan elemen lain */
+    background: #ffffff;
+}
+
+.navbar-isi {
+    display: flex;
+    flex-wrap: wrap;                  /* menu ponsel boleh turun ke baris baru */
+    justify-content: space-between;   /* logo di kiri, ☰ di kanan */
+    align-items: center;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Bodoni Moda", Georgia, serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #1e1e1e;
+}
+
+/* Checkbox disembunyikan; yang diklik pengguna adalah label ☰ */
+#toggle-menu { display: none; }
+
+.hamburger {
+    font-size: 28px;
+    line-height: 1;
+    color: #1e1e1e;
+    cursor: pointer;
+}
+
+.menu {
+    display: none;                    /* di ponsel menu tersembunyi */
+    width: 100%;                      /* saat muncul, isi satu baris penuh */
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 16px;
+}
+#toggle-menu:checked ~ .menu {        /* checkbox dicentang, menu tampil */
+    display: flex;
+}
+
+.menu-link {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.menu-link a {
+    display: inline-block;
+    padding: 6px 0;
+    color: #6b6f76;
+    font-weight: 500;
+}
+.menu-link a:hover,
+.menu-link a.aktif {
+    color: #1e1e1e;
+}
+
+/* Tiga ikon di kanan: keranjang, akun, garis pemisah, pengaturan */
+.menu-icon {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.menu-icon a {
+    display: grid;
+    place-items: center;
+}
+.garis {
+    width: 1px;
+    height: 28px;
+    background: rgba(30, 30, 30, 0.5);
+}
+
+@media (min-width: 1024px) {
+    .hamburger { display: none; }     /* ☰ tidak perlu di desktop */
+    .navbar-isi { flex-wrap: nowrap; }
+    .menu {
+        display: flex;                /* menu selalu tampil */
+        flex: 1;                      /* isi sisa ruang di kanan logo */
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: auto;
+        padding-top: 0;
+        margin-left: 80px;
+    }
+    .menu-link {
+        flex-direction: row;
+        gap: 40px;
+    }
+}
+
+/* ==== [B] HERO ==== */
+/* Hero berbentuk kartu hijau kebiruan dengan sudut bulat */
+.hero {
+    position: relative;               /* patokan untuk .hero-gambar (desktop) */
+    overflow: hidden;                 /* potong hiasan yang keluar kartu */
+    width: calc(100% - 32px);
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 24px;
+    background: #c1dcdc;
+}
+
+.hero-isi {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.hero h1 {
+    margin-bottom: 24px;
+    font-size: 40px;
+}
+
+/* Statistik: dua angka dipisah garis tegak */
+.stat-list {
+    display: flex;
+    margin-bottom: 28px;
+}
+.stat-list li {
+    display: flex;
+    flex-direction: column;           /* angka di atas, keterangan di bawah */
+    padding: 0 24px;
+    border-left: 1px solid #1e1e1e;   /* garis pemisah */
+}
+.stat-list li:first-child {           /* item pertama tanpa garis */
+    padding-left: 0;
+    border-left: 0;
+}
+.stat-list strong {
+    color: #1e1e1e;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+.stat-list span {
+    color: #1e1e1e;
+    font-size: 14px;
+}
+
+/* Kotak pencarian */
+.cari {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 440px;
+    padding: 8px 8px 8px 16px;
+    border-radius: 10px;
+    background: #ffffff;
+}
+.cari input {
+    flex: 1;                          /* input mengisi sisa ruang */
+    min-width: 0;                     /* boleh mengecil di layar sempit */
+    padding: 8px 0;
+    border: 0;
+    background: transparent;
+    font-size: 15px;
+    color: #1e1e1e;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.cari input::placeholder { color: #6b6f76; }
+.cari input:focus { outline: none; }
+.cari:focus-within { outline: 2px solid #1e1e1e; }
+
+.cari-tombol {
+    flex: 0 0 44px;                   /* ukuran tetap 44px */
+    height: 44px;
+    display: grid;
+    place-items: center;              /* ikon kaca pembesar di tengah */
+    border: 0;
+    border-radius: 8px;
+    background: #c1dcdc;
+    cursor: pointer;
+}
+
+/* Foto tanaman + hiasan hitam + dua panah.
+   Di HTML, urutan svg di dalam .hero-gambar adalah:
+   svg ke-1 = panah kiri, svg ke-2 = hiasan hitam, svg ke-3 = panah atas. */
+.hero-gambar {
+    position: relative;
+    height: 320px;
+}
+.hero-gambar svg { position: absolute; }
+
+.hero-gambar .panah-kiri { display: none; }       /* panah kiri hanya di desktop */
+
+.hero-gambar svg:nth-of-type(2) {                 /* hiasan hitam */
+    bottom: 0;
+    left: 50%;
+    width: 260px;
+    height: auto;
+    transform: translateX(-50%);
+}
+.hero-gambar img {                                /* foto tanaman */
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 90%;
+    width: auto;
+    max-width: none;
+    z-index: 2;                                   /* di depan hiasan hitam */
+}
+.hero-gambar svg:nth-of-type(3) {                 /* panah atas */
+    top: 8px;
+    right: 16px;
+    width: 44px;
+    height: auto;
+    z-index: 3;
+}
+
+@media (min-width: 768px) {
+    .hero h1 { font-size: 48px; }
+    .hero-isi {
+        padding-top: 48px;
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+    .hero-gambar { height: 400px; }
+    .hero-gambar svg:nth-of-type(2) { width: 340px; }
+    .hero-gambar svg:nth-of-type(3) { width: 60px; right: 40px; }
+}
+
+@media (min-width: 1024px) {
+    .hero h1 { font-size: 56px; }
+
+    .hero-isi {
+        min-height: 512px;
+        display: flex;
+        align-items: center;              /* teks di tengah tinggi kartu */
+        padding: 64px 48px;
+    }
+
+    .hero-gambar {
+        position: absolute;               /* keluar dari alur normal, pindah ke kanan */
+        right: 0;
+        bottom: 0;
+        width: 50%;
+        height: 100%;
+    }
+    .hero-gambar .panah-kiri {
+        display: block;
+        top: 64%;
+        left: -107px;
+        width: 176px;
+        height: auto;
+    }
+    .hero-gambar svg:nth-of-type(2) {
+        left: auto;
+        right: 70px;
+        width: 450px;
+        transform: none;
+    }
+    .hero-gambar img {
+        left: auto;
+        right: 85px;
+        transform: none;
+        height: 87%;
+    }
+    .hero-gambar svg:nth-of-type(3) {
+        top: 12px;
+        right: 24px;
+        width: 90px;
+    }
+}
+
+/* ==== [C] TANAMAN TERLARIS ==== */
+.empat-kolom {
+    display: grid;
+    grid-template-columns: 1fr;       /* ponsel: teks di atas, produk di bawah */
+    gap: 32px;
+    align-items: start;
+}
+
+.produk-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.produk img {
+    width: 100%;
+    aspect-ratio: 300 / 363;          /* rasio sama dengan foto produk */
+    object-fit: cover;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #fafafa;
+}
+.produk h3 {
+    font-size: 16px;
+    font-weight: 500;
+}
+.produk p { font-size: 15px; }
+
+@media (min-width: 768px) {
+    .produk-list { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+    .empat-kolom {
+        grid-template-columns: 250px 1fr;   /* kolom teks tetap, sisanya untuk produk */
+        gap: 56px;
+    }
+}
+
+/* ==== [D] TENTANG KAMI ==== */
+.layanan-list {
+    display: grid;
+    grid-template-columns: 1fr;       /* ponsel: 1 kolom */
+    gap: 40px;
+    margin-top: 48px;
+}
+
+.layanan {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 12px;
+    text-align: center;
+}
+
+.layanan-ikon {
+    width: 96px;
+    height: 96px;
+    display: grid;
+    place-items: center;              /* ikon di tengah lingkaran */
+    margin-bottom: 8px;
+    border-radius: 50%;
+    background: #c1dcdc;
+}
+.layanan-ikon img { width: 40px; }
+
+.layanan h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+.layanan p {
+    max-width: 300px;
+    font-size: 15px;
+}
+
+@media (min-width: 768px) {
+    .layanan-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+}
+
+/* ==== [E] KATEGORI ==== */
+.Kategori-list {
+    position: relative;
+    z-index: 0;                       /* membuat lapisan sendiri untuk ::before */
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 48px;
+}
+
+/* Pita hijau kebiruan selebar layar di belakang kartu.
+   box-shadow + clip-path membuatnya melebar ke kiri-kanan tanpa memunculkan scroll samping. */
+.Kategori-list::before {
+    content: "";
+    position: absolute;
+    z-index: -1;                      /* di belakang kartu */
+    top: 48px;
+    right: 0;
+    bottom: -64px;
+    left: 0;
+    background: #c1dcdc;
+    box-shadow: 0 0 0 100vmax #c1dcdc;
+    clip-path: inset(0 -100vmax);
+}
+
+.kartu {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.kartu-kategori img {
+    width: 100%;
+    aspect-ratio: 352 / 512;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.kartu h3 {
+    margin-top: 16px;
+    font-size: 16px;
+    font-weight: 700;
+}
+.kartu p {
+    max-width: 260px;
+    margin: 8px auto 0;
+    font-size: 15px;
+}
+.kartu .tombol { margin-top: 16px; }
+
+/* Kartu tengah: tombol putih */
+.kartu.aktif .tombol {
+    padding: 8px 20px;
+    border-radius: 6px;
+    background: #ffffff;
+}
+.kartu.aktif .tombol:hover { background: #f1f6f6; }
+
+@media (min-width: 768px) {
+    .Kategori-list {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: start;
+        gap: 24px;
+    }
+    .Kategori-list::before { bottom: -96px; }
+    .kartu {
+        max-width: none;
+        margin: 0;
+    }
+    .kartu.aktif { margin-top: 64px; }    /* kartu tengah turun */
+}
+@media (min-width: 1024px) {
+    .kartu.aktif { margin-top: 96px; }
+}
+
+/* ==== [F] TESTIMONI ==== */
+/* Container testimoni berisi judul dan kartu secara langsung,
+   jadi grid dipasang lewat :has() pada container yang memuat .testimoni. */
+.container:has(> .testimoni) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.testimoni {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;   /* teks di atas, profil menempel di bawah */
+    gap: 24px;
+    padding: 32px 32px 0;             /* tanpa padding bawah: foto menempel ke tepi */
+    border-radius: 12px;
+    background: #c1dcdc;
+    color: #1e1e1e;
+}
+.testimoni blockquote {
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.testimoni figcaption {
+    --kepala: 42px;                   /* jarak atas figcaption ke puncak kepala */
+    position: relative;               /* patokan untuk tanda kutip */
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+.testimoni figcaption > img:first-child {   /* kiri di samping kepala, kanan di belakang kepala */
+    position: absolute;
+    top: var(--kepala);
+    left: 6px;                        /* sebelumnya 30px */
+    width: 34px;
+    height: auto;
+    z-index: 1;                       /* di belakang foto */
+}
+.testimoni-foto {
+    position: relative;               /* syarat agar z-index berlaku */
+    z-index: 2;                       /* foto di depan tanda kutip */
+    align-self: flex-end;
+    width: auto;
+    height: 150px;
+    margin-left: -18px;
+    margin-bottom: -20px;
+}
+.testimoni figcaption > div {
+    padding-top: calc(var(--kepala) - 8px);   /* nama sejajar kepala */
+}
+.testimoni figcaption strong {
+    display: block;
+    color: #1e1e1e;
+    font-size: 15px;
+}
+.testimoni figcaption small {
+    display: block;
+    font-size: 12px;
+    color: #6b6f76;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;                /* dorong rating ke ujung kanan */
+    color: #1e1e1e;
+    font-weight: 700;
+}
+.rating img { width: 16px; }
+
+@media (min-width: 768px) {
+    .container:has(> .testimoni) { grid-template-columns: 1fr 1fr; }
+    .container:has(> .testimoni) > .teks { grid-column: 1 / -1; }  /* judul selebar baris */
+}
+
+/* ==== [G] FOOTER ==== */
+.footer {
+    padding-top: 56px;
+    background: #c1dcdc;
+    color: #6b6f76;
+    font-size: 15px;
+}
+
+.footer h4 {
+    margin-bottom: 16px;
+    font-size: 17px;
+}
+
+.footer-isi {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px 24px;
+}
+.footer-brand {
+    grid-column: 1 / -1;
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    max-width: 260px;
+}
+
+.footer-informasi,
+.footer-perusahaan,
+.footer-kontak {
+    display: grid;
+    gap: 12px;
+}
+.footer-isi a:hover { color: #1e1e1e; }
+
+.sosial {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+.sosial a { display: block; }
+.sosial svg {
+    width: 44px;
+    height: 44px;
+}
+
+.hak-cipta {
+    margin-top: 48px;
+    padding-top: 0;
+    padding-bottom: 24px;
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    .footer-isi {
+        grid-template-columns: 1fr repeat(3, auto);  /* brand lebar, tiga tautan rapat di kanan */
+        gap: 48px;
+    }
+    .footer-brand { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+}
